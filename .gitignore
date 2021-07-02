@@ -1,4 +1,5 @@
 .git
 .vs
 env/
+env1/
 yolo/yolov3.weights
