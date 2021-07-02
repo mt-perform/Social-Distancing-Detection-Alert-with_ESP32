@@ -1,5 +1,6 @@
 from mylib import config, thread
 from mylib.mailer import Mailer
+from mylib.ESP32TX import ESP32_TX
 from mylib.detection import detect_people
 from imutils.video import VideoStream, FPS
 from scipy.spatial import distance as dist
@@ -140,8 +141,13 @@ while True:
 
 #------------------------------Alert function----------------------------------#
 	if len(serious) >= config.Threshold:
+		ESP32_TX("ALERT!!").print_value()
 		cv2.putText(frame, "-ALERT: Violations over limit-", (10, frame.shape[0] - 80),
 			cv2.FONT_HERSHEY_COMPLEX, 0.60, (0, 0, 255), 2)
+		#triger ESP32
+		if config.ESP32:
+			ESP32_TX("ESP32").print_value()
+
 		if config.ALERT:
 			print("")
 			print('[INFO] Sending mail...')
