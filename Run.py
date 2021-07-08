@@ -147,7 +147,8 @@ while True:
 		#triger ESP32
 		if config.ESP32:
 			ESP32_TX("ESP32").print_value()
-
+			print('Serious Value:{}' .format(len(serious)))
+			ESP32_TX("TX").esp32_udp(len(serious))
 		if config.ALERT:
 			print("")
 			print('[INFO] Sending mail...')

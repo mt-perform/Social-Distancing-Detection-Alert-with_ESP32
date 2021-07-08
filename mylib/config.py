@@ -21,7 +21,7 @@ url = 0
 ALERT = False
 # Set mail to receive the real-time alerts. E.g., 'xxx@gmail.com'.
 MAIL = ''
-#Send alert to ESP32
+#Send alert to ESP32 (ESP32にアラートを送信)
 ESP32 = True
 # Set if GPU should be used for computations; Otherwise uses the CPU by default.
 USE_GPU = True
