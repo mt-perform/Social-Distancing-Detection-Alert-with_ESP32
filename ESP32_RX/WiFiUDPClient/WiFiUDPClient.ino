@@ -1,3 +1,7 @@
+/*
+ *  This sketch sends random data over UDP on a ESP32 device
+ *
+ */
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
@@ -8,7 +12,7 @@ const char * networkPswd = "helloworld1234";
 //IP address to send UDP data to:
 // either use the ip address of the server or 
 // a network broadcast address
-const char * udpAddress = "192.168.0.255";
+const char * udpAddress = "172.20.10.2"; //local ip address  //cmd ipconfig 
 const int udpPort = 3333;
 
 //Are we currently connected?
@@ -42,11 +46,31 @@ void connectToWiFi(const char * ssid, const char * pwd){
 
   // delete old config
   WiFi.disconnect(true);
-
-
+  //register event handler
+  WiFi.onEvent(WiFiEvent);
   
   //Initiate connection
   WiFi.begin(ssid, pwd);
 
   Serial.println("Waiting for WIFI connection...");
+}
+
+//wifi event handler
+void WiFiEvent(WiFiEvent_t event){
+    switch(event) {
+      case SYSTEM_EVENT_STA_GOT_IP:
+          //When connected set 
+          Serial.print("WiFi connected! IP address: ");
+          Serial.println(WiFi.localIP());  
+          //initializes the UDP state
+          //This initializes the transfer buffer
+          udp.begin(WiFi.localIP(),udpPort);
+          connected = true;
+          break;
+      case SYSTEM_EVENT_STA_DISCONNECTED:
+          Serial.println("WiFi lost connection");
+          connected = false;
+          break;
+      default: break;
+    }
 }
