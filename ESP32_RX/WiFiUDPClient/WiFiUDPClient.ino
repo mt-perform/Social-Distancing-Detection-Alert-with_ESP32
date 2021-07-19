@@ -4,7 +4,6 @@
 const char* ssid = "Lphone8"; //router SSID
 const char* password = "helloworld1234"; //router pass
  
-const int to_udp_port = 55556; //送信相手のポート番号
 const int my_server_udp_port = 55555; //開放する自ポート
 
 WiFiUDP udp;
@@ -31,10 +30,11 @@ void setup() {
   delay(1000);
   connectToWiFi();
   while(!connected){
+    //受信後処理内容
     delay(1);
   }
   
-  delay(500); //これ重要。別タスクでM5.begin関数が起動するまで待つ。
+  delay(500); 
 }
  
 void loop() {
