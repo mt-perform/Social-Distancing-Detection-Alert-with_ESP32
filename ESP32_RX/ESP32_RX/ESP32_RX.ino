@@ -1,52 +1,19 @@
-#include <WiFi.h>
-#include <WiFiUdp.h>
+#include <Wire.h>
+#include "SSD1306.h"//ディスプレイ用ライブラリを読み込み
+ 
+SSD1306  display(0x3c, 21, 22); //SSD1306インスタンスの作成（I2Cアドレス,SDA,SCL）
+ 
+void setup() {  
 
-// WiFi network name and password:
-const char * networkName = "Lphone8";
-const char * networkPswd = "helloworld1234";
+  display.init();    //ディスプレイを初期化
+  display.setFont(ArialMT_Plain_24);    //フォントを設定
+  display.drawString(0, 0, "1234567890");    //(0,0)の位置にHello Worldを表示
+  display.drawString(0, 25, "1234567890"); 
+  display.display();   //指定された情報を描画
+ }
+ 
+void loop() {
 
-//IP address to send UDP data to:
-// either use the ip address of the server or 
-// a network broadcast address
-const char * udpAddress = "192.168.0.255";
-const int udpPort = 3333;
-
-//Are we currently connected?
-boolean connected = false;
-
-//The udp library class
-WiFiUDP udp;
-
-void setup(){
-  // Initilize hardware serial:
-  Serial.begin(115200);
   
-  //Connect to the WiFi network
-  connectToWiFi(networkName, networkPswd);
-}
-
-void loop(){
-  //only send data when connected
-  if(connected){
-    //Send a packet
-    udp.beginPacket(udpAddress,udpPort);
-    udp.printf("Seconds since boot: %lu", millis()/1000);
-    udp.endPacket();
+ 
   }
-  //Wait for 1 second
-  delay(1000);
-}
-
-void connectToWiFi(const char * ssid, const char * pwd){
-  Serial.println("Connecting to WiFi network: " + String(ssid));
-
-  // delete old config
-  WiFi.disconnect(true);
-
-
-  
-  //Initiate connection
-  WiFi.begin(ssid, pwd);
-
-  Serial.println("Waiting for WIFI connection...");
-}
