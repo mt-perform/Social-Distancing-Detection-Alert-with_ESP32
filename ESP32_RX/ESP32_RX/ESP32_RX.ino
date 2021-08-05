@@ -13,28 +13,14 @@ const int to_udp_port = 55556; //送信相手のポート番号
 
 boolean connected = false;
 
-uint8_t receive_position_data = 0;
-uint8_t receive_direction = 0;
-uint8_t receive_color_data = 0;
-uint8_t old_line_data = 0;
-uint8_t old_color_data = 0;
 boolean isDisp_ok = false; //ディスプレイ表示フラグ
-boolean isSet_send_data = false;
-boolean isSend_rect_move = false; //図形動作開始フラグ
-int16_t send_position = 0; //送信図形の座標位置
-uint8_t send_direction = 0; //送信図形の動作方向変数
-uint8_t send_color_num = 0; //送信図形のカラー番号
-uint32_t now_time = 0;
-int16_t interval = 100; //UDPデータ送信間隔
-uint8_t rect_width = 63; //図形の幅
-uint8_t rect_height = 100; //図形の高さ
+int serious_value=0;
  
 void setup() {  
    Serial.begin(115200);
   delay(1000);
   connectToWiFi();
   while(!connected){
-    //接続前処理内容
     delay(1);
   }
   
@@ -43,26 +29,29 @@ void setup() {
  
 void loop() {
   receiveUDP();
+  warn();
+  getCOVID_data();
   
  
   }
 
-//************************************
+//*****functions**************
 void receiveUDP(){
   if(1){
     int packetSize = udp.parsePacket();
     if(packetSize > 0){
-      receive_position_data = udp.read();
-      receive_direction = udp.read();
-      receive_color_data = udp.read();
-      //Serial.println(receive_position_data);
-      //Serial.printf("receive_position_data=%d, receive_color_data=%d\r\n", receive_position_data, receive_color_data);
+      serious_value = udp.read();
+      Serial.printf("serious_value=%d", serious_value);
       isDisp_ok = true;
     }
   }
 }
- 
 
+void warn(){}
+ 
+void getCOVID_data(){
+  //get No. of positive cases in Japan 
+  }
  
  
 void connectToWiFi(){
