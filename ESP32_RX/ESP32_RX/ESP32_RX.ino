@@ -10,6 +10,21 @@
 WiFiUDP udp;
 SSD1306  display(0x3c, 21, 22); //set SSD1306 instance（I2C address,SDA,SCL）
 
+#define BUZZER_PIN 25 //buzzer pin number  GND<->buzzer pin
+#define C4 261.6
+#define C#4 277.18
+#define D4 293.665
+#define D#4 311.127
+#define E4 329.63
+#define F4 349.228
+#define F#4 369.994
+#define G4 391.995
+#define G#4 415.305
+#define A4 440
+#define A#4 466.164
+#define B4 493.883
+#define C5 523.251
+
 const char* ssid = "Lphone8"; //router SSID
 const char* password = "helloworld1234"; //router pass
 //covid19 api
@@ -25,19 +40,20 @@ char date[20],hour_minute[20];
 boolean connected = false;
 boolean isDisp_ok = false; //ディスプレイ表示フラグ
 int serious_value=0;
- 
+
+
+ ////////////////////////////////////////////////////////////////////
 void setup() {  
   Serial.begin(115200);
+  ledcSetup(1,12000, 8);
+  ledcAttachPin(BUZZER_PIN,1);
   configTime(9 * 3600L, 0, "ntp.nict.jp", "time.google.com", "ntp.jst.mfeed.ad.jp");
   display.init();
   delay(1000);
   connectToWiFi();
   while(!connected){
-    
-    delay(1);
+   delay(1);
   }
-  
- 
  }
  
 void loop() {
@@ -99,8 +115,12 @@ void connectToWiFi(){
   display.init();    //ディスプレイを初期化
   display.drawString(0, 0, "Waiting for WIFI connection...");    //(0,0)の位置に
   display.display(); 
-  
 }
+
+void buzzer(){
+  ledcWriteTone(1,C4);
+  delay(500);
+  }
  
 void WiFiEvent(WiFiEvent_t event){
   IPAddress myIP = WiFi.localIP();
