@@ -2,25 +2,38 @@
 #include "SSD1306.h"//ディスプレイ用ライブラリを読み込み
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <ArduinoJson.h>
+#include <HTTPClient.h>
+#include <Ticker.h>
+
 
 WiFiUDP udp;
-SSD1306  display(0x3c, 21, 22); //SSD1306インスタンスの作成（I2Cアドレス,SDA,SCL）
+SSD1306  display(0x3c, 21, 22); //set SSD1306 instance（I2C address,SDA,SCL）
 
 const char* ssid = "Lphone8"; //router SSID
 const char* password = "helloworld1234"; //router pass
- 
+//covid19 api
+const String endpoint = "https://covid-193.p.rapidapi.com/statistics";
+const String key = "yourAPIKEY"; 
+
 const int to_udp_port = 55556; //送信相手のポート番号
 
-boolean connected = false;
+//NTP structure
+struct tm timeInfo;
+char date[20],hour_minute[20];
 
+boolean connected = false;
 boolean isDisp_ok = false; //ディスプレイ表示フラグ
 int serious_value=0;
  
 void setup() {  
-   Serial.begin(115200);
+  Serial.begin(115200);
+  configTime(9 * 3600L, 0, "ntp.nict.jp", "time.google.com", "ntp.jst.mfeed.ad.jp");
+  display.init();
   delay(1000);
   connectToWiFi();
   while(!connected){
+    
     delay(1);
   }
   
@@ -28,10 +41,11 @@ void setup() {
  }
  
 void loop() {
-  receiveUDP();
-  warn();
-  getCOVID_data();
-  
+  //receiveUDP();
+  //warn();
+  //getCOVID_data();
+  display_time();
+  delay(200);
  
   }
 
@@ -48,12 +62,27 @@ void receiveUDP(){
 }
 
 void warn(){}
+
+void display_time(){
+  getLocalTime(&timeInfo);
+  sprintf(date, " %04d/%02d/%02d",timeInfo.tm_year + 1900, timeInfo.tm_mon + 1, timeInfo.tm_mday);
+  sprintf(hour_minute, "%02d:%02d",timeInfo.tm_hour, timeInfo.tm_min);
+  
+  display.clear();
+  //date
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(0, 0, date);
+  //time
+  display.setFont(ArialMT_Plain_24);
+  display.drawString(20, 20, hour_minute);
+  display.display();
+  }
  
 void getCOVID_data(){
   //get No. of positive cases in Japan 
-  }
- 
- 
+  //https://api.rakuten.net/api-sports/api/covid-193  
+} 
+
 void connectToWiFi(){
   Serial.println("Connecting to WiFi network: " + String(ssid));
    display.init();    //ディスプレイを初期化
@@ -69,6 +98,7 @@ void connectToWiFi(){
   display.init();    //ディスプレイを初期化
   display.drawString(0, 0, "Waiting for WIFI connection...");    //(0,0)の位置に
   display.display(); 
+  
 }
  
 void WiFiEvent(WiFiEvent_t event){
