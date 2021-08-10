@@ -44,9 +44,9 @@ void loop() {
   //receiveUDP();
   //warn();
   //getCOVID_data();
-  display_time();
-  delay(200);
- 
+  if(connected){display_time();}
+  display.invertDisplay();
+  delay(1000);
   }
 
 //*****functions**************
@@ -70,11 +70,12 @@ void display_time(){
   
   display.clear();
   //date
-  display.setFont(ArialMT_Plain_16);
+  display.setFont(ArialMT_Plain_10);
   display.drawString(0, 0, date);
   //time
-  display.setFont(ArialMT_Plain_24);
-  display.drawString(20, 20, hour_minute);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(100, 0, hour_minute);
+  display.drawLine(2, 12, 126,12); //x0,y0,x1,y1
   display.display();
   }
  
@@ -87,7 +88,7 @@ void connectToWiFi(){
   Serial.println("Connecting to WiFi network: " + String(ssid));
    display.init();    //ディスプレイを初期化
    display.setFont(ArialMT_Plain_10);    //フォントを設定
-   display.drawString(0, 0, "Connecting to WiFi network: " + String(ssid));    //(0,0)の位置に
+   display.drawStringMaxWidth(0, 0, 128,  "Connecting to WiFi network: " + String(ssid));
    display.display();   //指定された情報を描画
       
   WiFi.disconnect(true, true);
@@ -118,7 +119,7 @@ void WiFiEvent(WiFiEvent_t event){
       break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
       Serial.println("WiFi lost connection");
-      display.init();    //ディスプレイを初期化
+      display.init();  //ディスプレイを初期化
       display.setFont(ArialMT_Plain_10);    //フォントを設定
       display.drawString(0, 0, "WiFi lost connection");    //(0,0)の位置に
       display.display(); 
