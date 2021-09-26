@@ -98,7 +98,8 @@ void receiveUDP(){
     delay(1000);
     display.clear();
     display.setFont(ArialMT_Plain_16);
-    display.drawString(20,25,"Serious violations="+String(packetBuffer));
+    display.drawStringMaxWidth(0,0,128 ,"Serious violations");
+    display.drawStringMaxWidth(64,32,128 ,String(packetBuffer));
     display.display();
     Serial.print("packetSize=");
     Serial.println(packetSize);
