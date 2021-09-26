@@ -24,7 +24,7 @@ MAIL = ''
 #Send alert to ESP32 (ESP32にアラートを送信)
 ESP32 = True
 # Set if GPU should be used for computations; Otherwise uses the CPU by default.
-USE_GPU = True
+USE_GPU = False
 # Define the max/min safe distance limits (in pixels) between 2 people.
 MAX_DISTANCE = 80
 MIN_DISTANCE = 50

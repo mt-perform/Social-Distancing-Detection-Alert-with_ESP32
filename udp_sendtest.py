@@ -14,3 +14,12 @@ class ESP32_TX:
         msg = str(len_s)
         s.sendto(msg.encode(), (self.ADDRESS, self.PORT))
         s.close()
+
+#デバッグ用プログラム　ESP32とソケット通信のテストに使います
+
+
+#ESP32_TX("TX").esp32_udp("52226") 
+#ESP32_TX("TX").esp32_udp("hello")
+#ESP32_TX("TX").esp32_udp(52226)
+#ESP32_TX("").esp32_udp(522+26) #548
+ESP32_TX("TX").esp32_udp(16)
