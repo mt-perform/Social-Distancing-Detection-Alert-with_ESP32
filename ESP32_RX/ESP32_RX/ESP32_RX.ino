@@ -8,6 +8,8 @@
 
 
 WiFiUDP udp;
+TaskHandle_t task_handl; //マルチタスクハンドル
+
 SSD1306  display(0x3c, 21, 22); //set SSD1306 instance（I2C address,SDA,SCL）
 
 #define BUZZER_PIN 25 //buzzer pin number  GND<->buzzer pin
@@ -25,13 +27,13 @@ SSD1306  display(0x3c, 21, 22); //set SSD1306 instance（I2C address,SDA,SCL）
 #define B4 493.883
 #define C5 523.251
 
-const char* ssid = "Lphone8"; //router SSID
-const char* password = "helloworld1234"; //router pass
+const char* ssid = "mtspringfriend_osoi"; //router SSID
+const char* password = "haru0320"; //router pass
 //covid19 api
 const String endpoint = "https://covid-193.p.rapidapi.com/statistics";
 const String key = "yourAPIKEY"; 
 
-const int to_udp_port = 55556; //送信相手のポート番号
+const int port = 55555; //ポート番号
 
 //NTP structure
 struct tm timeInfo;
@@ -39,12 +41,15 @@ char date[20],hour_minute[20];
 
 boolean connected = false;
 boolean isDisp_ok = false; //ディスプレイ表示フラグ
+int packetSize = 0;
 int serious_value=0;
 
 
- ////////////////////////////////////////////////////////////////////
+ ///////////////////core 1 task　時計表示、接続
 void setup() {  
   Serial.begin(115200);
+  xTaskCreatePinnedToCore(&taskSocket, "taskSocket", 8192, NULL, 10, &task_handl, 0);
+  
   ledcSetup(1,12000, 8);
   ledcAttachPin(BUZZER_PIN,1);
   configTime(9 * 3600L, 0, "ntp.nict.jp", "time.google.com", "ntp.jst.mfeed.ad.jp");
@@ -60,24 +65,50 @@ void loop() {
   //receiveUDP();
   //warn();
   //getCOVID_data();
-  if(connected){display_time();}
-  display.invertDisplay();
-  delay(1000);
+  if(connected){
+    display_time();
+    receiveUDP();
+    if(packetSize>0){
+      display.setFont(ArialMT_Plain_24);
+      display.drawString(20,25,"ALERT!!!");
+      delay(10);
+      buzzer();
+    }
+    display.display();
   }
+  delay(1);
+  }
+  
+//////core 0 task///////
+void taskSocket(void *pvParameters){
+  while(true){
+    delay(1);
+    if(connected){
+    
+    }
+    }
+  }
+
+
+
+
 
 //*****functions**************
 void receiveUDP(){
   if(1){
-    int packetSize = udp.parsePacket();
+    packetSize = udp.parsePacket();
     if(packetSize > 0){
       serious_value = udp.read();
-      Serial.printf("serious_value=%d", serious_value);
+      Serial.print("serious_value=");
+      Serial.println(serious_value);
+      Serial.print("packetSize=");
+      Serial.println(packetSize);
       isDisp_ok = true;
+      delay(10);
     }
   }
 }
 
-void warn(){}
 
 void display_time(){
   getLocalTime(&timeInfo);
@@ -115,11 +146,13 @@ void connectToWiFi(){
   display.init();    //ディスプレイを初期化
   display.drawString(0, 0, "Waiting for WIFI connection...");    //(0,0)の位置に
   display.display(); 
+  udp.begin(port);   ///////UDPの待受ポート開放
 }
 
 void buzzer(){
   ledcWriteTone(1,C4);
   delay(500);
+  ledcWriteTone(1,0); //mute
   }
  
 void WiFiEvent(WiFiEvent_t event){

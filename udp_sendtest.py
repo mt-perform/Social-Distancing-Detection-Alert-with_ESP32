@@ -14,3 +14,5 @@ class ESP32_TX:
         msg = str(len_s)
         s.sendto(msg.encode(), (self.ADDRESS, self.PORT))
         s.close()
+
+ESP32_TX("TX").esp32_udp(50)
