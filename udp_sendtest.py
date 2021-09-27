@@ -1,5 +1,5 @@
 from socket import socket, AF_INET, SOCK_DGRAM
-
+import json
 class ESP32_TX:
     def __init__(self,text):
         self.value=text
@@ -22,4 +22,6 @@ class ESP32_TX:
 #ESP32_TX("TX").esp32_udp("hello")
 #ESP32_TX("TX").esp32_udp(52226)
 #ESP32_TX("").esp32_udp(522+26) #548
-ESP32_TX("TX").esp32_udp(16)
+ESP32_TX("TX").esp32_udp(17)
+
+
