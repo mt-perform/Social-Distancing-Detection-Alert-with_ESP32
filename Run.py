@@ -60,6 +60,10 @@ writer = None
 # start the FPS counter
 fps = FPS().start()
 
+#send covid data
+
+
+
 # loop over the frames from the video stream
 while True:
 	# read the next frame from the file

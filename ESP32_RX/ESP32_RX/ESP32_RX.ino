@@ -25,10 +25,8 @@ SSD1306  display(0x3c, 21, 22); //set SSD1306 instance（I2C address,SDA,SCL）
 #define B4 493.883
 #define C5 523.251
 
-
-//covid19 api
-const String endpoint = "https://covid-193.p.rapidapi.com/statistics";
-const String key = "yourAPIKEY"; 
+const char* ssid = "******"; //router SSID
+const char* password = "*****"; //router pass
 
 const int port = 55555; //ポート番号
 
@@ -40,7 +38,7 @@ boolean connected = false;
 boolean isDisp_ok = false; //ディスプレイ表示フラグ
 
 int packetSize = 0;
-int serious_value=0;
+
 
 
  ///////////////////core 1 task　時計表示、接続
@@ -120,13 +118,13 @@ void display_time(){
   //time
   display.setFont(ArialMT_Plain_10);
   display.drawString(100, 0, hour_minute);
-  display.drawLine(2, 12, 126,12); //x0,y0,x1,y1
+  display.drawLine(2, 12, 126,12); //x0,y0,x1,y1 //直線を引く
   display.display();
   }
  
 void getCOVID_data(){
   //get No. of positive cases in Japan 
-  //https://api.rakuten.net/api-sports/api/covid-193  
+   
 } 
 
 void connectToWiFi(){
@@ -148,9 +146,13 @@ void connectToWiFi(){
 }
 
 void buzzer(){
-  ledcWriteTone(1,C4);
-  delay(500);
+  ledcWriteTone(1,C5);
+  delay(200);
   ledcWriteTone(1,0); //mute
+  delay(100);
+  ledcWriteTone(1,C5);
+  delay(200);
+  ledcWriteTone(1,0);
   }
  
 void WiFiEvent(WiFiEvent_t event){
